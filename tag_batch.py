@@ -19,6 +19,7 @@
 #
 
 from tag_utils.dom import Item
+from tag_utils.tag_io import parseDirectory
 
 class Condition(object):
 
@@ -33,19 +34,47 @@ class Condition(object):
 
         return False
 
-class Matcher(object):
+class Rule(object):
 
-    def __init__(self, conditions, taggings):
+    def __init__(self, name, conditions, taggings):
+        self.name = name
         self.conditions = conditions
         self.taggings = taggings
 
-    def matches(line):
-        pass
+    def isMatching(self, item):
+        for c in self.conditions:
+            if not c.matches(item):
+                return False
 
-def main(argv):
+        return True
+
+    def applyRule(self, item):
+        if not self.isMatching(item):
+            return
+
+        for t in self.taggings:
+            item.appendEntry(t)
+
+def parseRules(path):
+    # TODO
     pass
 
-if __name__ == '__main__':
+def main():
     import sys
 
-    main(sys.argv)
+    rulesFilePath = sys.argv[1]
+
+    rules = parseRules(rulesFilePath)
+    if len(rules) == 0:
+        return
+
+    for itemPath in sys.argv[2:]:
+        item = parseDirectory(itemPath)
+
+        for rule in rules:
+            rule.applyRule(item)
+
+        writeFile(item, item.fileName)
+
+if __name__ == '__main__':
+    main()
