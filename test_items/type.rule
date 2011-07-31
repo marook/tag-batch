@@ -1,0 +1,8 @@
+
+[number]
+!value=^[0-9]+$
+:type=number
+
+[char]
+!value=^[a-z]+$
+:type=char
