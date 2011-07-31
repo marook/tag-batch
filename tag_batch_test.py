@@ -23,9 +23,10 @@ from unittest import TestCase, main
 from tag_utils.dom import Item
 from tag_utils.dom import Tagging
 
-from tag_batch import Condition
+from tag_batch import Condition, parseRules, RuleParseException
 
 import re
+import os
 
 def createItem(taggings):
     entries = []
@@ -52,6 +53,67 @@ class TestCondition(TestCase):
         c = Condition('context', re.compile('^value$'))
 
         self.assertTrue(c.matches(item))
+
+class TestParseRules(TestCase):
+
+    def setUp(self):
+        self.rulesDir = os.path.join('.', 'rules')
+
+    def parseTestRules(self, ruleFileName):
+        return parseRules(os.path.join(self.rulesDir, ruleFileName))
+
+    def testParseEmptyFile(self):
+        rules = list(self.parseTestRules('empty.rule'))
+
+        self.assertEqual([], rules)
+
+    def testConditionBeforeRuleFail(self):
+        try:
+            list(self.parseTestRules('conditionBeforeRule.rule'))
+        except RuleParseException as e:
+            self.assertEqual(2, e.lineNo)
+
+            return
+
+        self.fail('Expected exception')
+
+    def testTaggingBeforeRuleFail(self):
+        try:
+            list(self.parseTestRules('taggingBeforeRule.rule'))
+        except RuleParseException as e:
+            self.assertEqual(2, e.lineNo)
+
+            return
+
+        self.fail('Expected exception')
+
+    def testInvalidSyntaxFail(self):
+        try:
+            list(self.parseTestRules('invalidSyntax.rule'))
+        except RuleParseException as e:
+            self.assertEqual(2, e.lineNo)
+
+            return
+
+        self.fail('Expected exception')
+
+    def testOneValidRule(self):
+        rules = list(self.parseTestRules('oneRule.rule'))
+
+        self.assertEqual(1, len(rules))
+
+        rule = rules[0]
+
+        self.assertEqual('rule', rule.name)
+        
+        self.assertEqual(1, len(rule.conditions))
+        condition = rule.conditions[0]
+        self.assertEqual('conditionContext', condition.context)
+
+        self.assertEqual(1, len(rule.taggings))
+        tagging = rule.taggings[0]
+        self.assertEqual('tagContext', tagging.context)
+        self.assertEqual('tagValue', tagging.value)
 
 if __name__ == '__main__':
     main()

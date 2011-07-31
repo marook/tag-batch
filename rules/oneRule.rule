@@ -1,0 +1,4 @@
+
+[rule]
+!conditionContext=$^
+:tagContext=tagValue
