@@ -58,11 +58,13 @@ class Rule(object):
         if not self.isMatching(item):
             return False
 
-        for t in self.taggings:
-            # TODO only return True when some entry did not exist before
-            item.appendEntry(t)
+        taggingAppended = False
 
-        return True
+        for t in self.taggings:
+            if item.appendEntry(t):
+                taggingAppended = True
+
+        return taggingAppended
 
 class RuleParseException(Exception):
     
