@@ -1,0 +1,43 @@
+tag-batch - tagging as a batch job
+
+1) Installation
+2) Usage
+3) Contact
+
+---------------------------------------------------------------------
+Installation
+
+tag-batch depends on tagfs-utils (https://github.com/marook/tagfs-utils). So
+make sure you have installed tagfs-utils first.
+
+Verify the rules in Makefile before you call make! Maybe you have to adjust
+some path settings.
+
+$ make install
+
+---------------------------------------------------------------------
+Usage
+
+tag_batch.py reads a rule file and applies it to tagged items.
+
+A rule file can look like this:
+[my_rule]
+!context=^value[0-9]$
+:newContext=newValue
+
+The lines above define one rule named 'my_rule'. my_rule will set the tagging
+'newContext: newValue' if the defined conditions match. Conditions start with a
+! character. Conditions match when a value for a defined context matches the
+supplied regular expression.
+
+Details about the regular expression syntax can be read here:
+http://docs.python.org/library/re.html#regular-expression-syntax
+
+tag_batch.py can be executed like this:
+$ tag_batch.py my_rules.rule item1 item2 item3
+
+---------------------------------------------------------------------
+Contact
+
+* homepage: https://github.com/marook/tag-batch
+* author: Markus Pielmeier <markus.pielmeier@googlemail.de>
