@@ -52,11 +52,17 @@ class Rule(object):
         return True
 
     def applyRule(self, item):
+        if len(self.taggings) == 0:
+            return False
+
         if not self.isMatching(item):
-            return
+            return False
 
         for t in self.taggings:
+            # TODO only return True when some entry did not exist before
             item.appendEntry(t)
+
+        return True
 
 class RuleParseException(Exception):
     
@@ -143,10 +149,14 @@ def main():
     for itemPath in sys.argv[2:]:
         item = parseDirectory(itemPath)
 
-        for rule in rules:
-            rule.applyRule(item)
+        itemModified = False
 
-        writeFile(item, item.fileName)
+        for rule in rules:
+            if rule.applyRule(item):
+                itemModified = True
+
+        if itemModified:
+            writeFile(item, item.fileName)
 
 if __name__ == '__main__':
     main()
