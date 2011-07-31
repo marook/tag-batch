@@ -19,7 +19,7 @@
 #
 
 from tag_utils.dom import Item, Tagging
-from tag_utils.tag_io import parseDirectory
+from tag_utils.tag_io import parseDirectory, writeFile
 
 class Condition(object):
 
@@ -33,6 +33,9 @@ class Condition(object):
                 return True
 
         return False
+
+    def __str__(self):
+        return 'Condition(%s, %s)' % (self.context, self.valuePattern)
 
 class Rule(object):
 
@@ -126,9 +129,14 @@ def parseRules(path):
 def main():
     import sys
 
+    if len(sys.argv) < 2:
+        print 'Usage %s: [rule file] [items...]' % (sys.argv[0])
+
+        sys.exit(1)
+
     rulesFilePath = sys.argv[1]
 
-    rules = parseRules(rulesFilePath)
+    rules = list(parseRules(rulesFilePath))
     if len(rules) == 0:
         return
 

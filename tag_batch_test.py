@@ -109,6 +109,7 @@ class TestParseRules(TestCase):
         self.assertEqual(1, len(rule.conditions))
         condition = rule.conditions[0]
         self.assertEqual('conditionContext', condition.context)
+        self.assertTrue(condition.valuePattern.match('test'))
 
         self.assertEqual(1, len(rule.taggings))
         tagging = rule.taggings[0]

@@ -1,4 +1,4 @@
 
 [rule]
-!conditionContext=$^
+!conditionContext=^test$
 :tagContext=tagValue
